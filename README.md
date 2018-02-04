@@ -148,14 +148,276 @@ wants to use as an entry point. This includes simple triggers (see
 and callbacks from html services
 ([https://developers.google.com/apps-script/guides/html/reference/run]).
 
-## Attached Scripts / Addons
-TODO.
+## Running Scripts
+
+### Using the Script Editor
+
+The easiest way to run a script is to upload it (using one of the provided
+tools), and then run a function from within the Script Editor.
+
+The Script Editor is not connected by default in Google Drive. If the
+uploaded script doesn't open on double-click: go to
+ "New" -> "More" -> "Connect more apps" and connect "Google Apps Script".
+
+The Editor allows to run (statically visible) functions directly.
+
+#### Bound Scripts / Addons
+Scripts that should be run on an opened document/spreadsheet are called
+"bound scripts" or "addons".
+
+The Script Editor has a convenient 'Test as add-on...' functionality which
+opens a file with the script running as add-on.
+
+### Using Google APIs
+Instead of manually opening the Script Editor and clicking "run", one can
+also use Google APIs to trigger the execution of a script's function
+programmatically.
+
+This approach requires some setup, because the script and the credentials
+of the API call must be in the same Google Cloud project. The Walk-through
+below details every necessary step.
+
+### As a Shared Library
+The Script Editor's "Test as add-on...", one can also create a bound script
+and use the uploaded script as a shared library. This approach has the
+advantage that the script will also be loaded when the document is opened
+outside the editor. It also makes it possible for other users to use the
+script without needing to publish it.
+
+1. Create a saved version of the script you want to use as a shared library. (File -> Manage versions).
+1. Create a bound script ("Tools" -> "Script Editor" from within a open
+file (document, spreadsheet, ...).
+2. Save the project and give it a name.
+3. Link the uploaded script as shared library: Resources -> Libraries -> Add a library.
+  Don't forget to enable the "Development mode". This way uploads to the script are
+  immediately visible to you (but not other users).
+
+Once that's in place, on just needs to forward functions to the shared library.
+For example, the following bound script forwards the `onOpen` and `hello`
+functions from the bound script to the shared library (imported with the
+identifier "dart"):
+
+``` JS
+function onOpen(e) { dart.onOpen(e); }
+function demo() { dart.demo(); }
+```
+
+Interestingly, it's not necessary to forward menu functions. In fact, it's
+possible to create menu entries that call immediately into the shared
+library. In this case, the function does not even need a stub.
+
+For development it's thus convenient to forward the prefix to Dart's
+`onOpen` function:
+
+``` JS
+function onOpen(e) { dart.onOpen(e, "dart"); }
+```
+
+Inside Dart, one can then use this information to set up menu entries
+without needing to deal with forwarders or stub functions.
+
+``` dart
+@JS()
+external set onOpen(value);
+
+@JS()
+external set hello(value);
+
+void onOpenDart(e, [String prefix]) {
+  if (prefix == null) {
+    prefix = "";
+  } else {
+    prefix = "$prefix.";
+  }
+  SpreadsheetApp
+      .getUi()
+      .createMenu("Dart")
+      .addItem("hello", "${prefix}hello")
+      .addToUi();
+}
+
+void helloDart() {
+  SpreadsheetApp.getUi().alert("Hello World");
+}
+
+main() {
+  onOpen = allowInterop(onOpenDart);
+  hello = allowInterop(helloDart);
+}
+```
 
 ## Walk-throughs
-TODO.
+This section step-by-step instructions on common tasks.
+
+For all examples we assume a `pubspec.yaml` depending on the
+`google-apps` and `js` package:
+
+```
+name: example
+description: Example for Google Apps scripting in Dart.
+version: 0.0.1
+#homepage: https://www.example.com
+author: <Insert Author>
+
+environment:
+  sdk: '>=1.20.1 <2.0.0'
+
+dependencies:
+  js: ^0.6.1
+  google_apps: ^0.0.1
+```
 
 ### Create Document
+In this example we write a script that creates a new document.
+
+Create the following `bin/doc.dart` file inside your project:
+
+``` dart
+@JS()
+library example;
+
+import 'package:js/js.dart';
+import 'package:google_apps/document.dart';
+
+@JS()
+external set create(value);
+
+void createDart() {
+  var document = DocumentApp.create("doc- ${new DateTime.now()}");
+  var body = document.getBody();
+  body.appendParagraph("Created from Dart").editAsText().setFontSize(32);
+}
+
+void main() {
+  create = allowInterop(createDart);
+}
+```
+
+Compile it with dart2js:
+
+```
+$ dart2js --csp -o out.js bin/doc.dart
+```
+
+Upload it Google Drive as a Google Apps script:
+```
+$ apps_script_watch -s create out.js docs_create
+```
+(or if you haven't activated the `apps_script_uploader`:
+```
+$ pub global run apps_script_uploader:main -s create out.js docs_create
+```
+
+After authentication, the tool uploads the script as Google Apps script.
+
+Open it in Google Drive. If it doesn't work ("No preview available")
+connect the "Google Apps Script" app first:
+1. New -> More -> Connect more apps
+2. Search for Google Apps Script and connect it.
+
+In the editor select "create" in the listed functions and press run:
+
+![Image of selecting create](pics/select_create.png)
+
+The first time the script is run it will ask for permissions, and then
+create a new Google Docs document.
 
 ### Hello World Addon
+In this section we create a script that is bound to a document.
+
+First create a new spreadsheet. Alternatively you can create a Google Docs
+document, but you would need to change a few lines below.
+
+Create the following `bin/sheet.dart` program:
+
+``` dart
+@JS()
+library hello_docs;
+
+import 'package:js/js.dart';
+import 'package:google_apps/spreadsheet.dart';
+
+@JS()
+external set sayHello(value);
+
+@JS()
+external set onOpen(value);
+
+void sayHelloDart() {
+  SpreadsheetApp.getUi().alert("Hello world");
+}
+
+void onOpenDart(e) {
+  SpreadsheetApp
+      .getUi()
+      .createMenu("from dart")
+      .addItem("say hello", "sayHello")
+      .addToUi();
+}
+
+main(List<String> arguments) {
+  onOpen = allowInterop(onOpenDart);
+  sayHello = allowInterop(sayHelloDart);
+}
+```
+
+Compile it with dart2js:
+```
+dart2js --csp -o out.js bin/sheet.dart
+```
+
+Upload it to Google Drive:
+```
+$ apps_script_watch -s onOpen -s sayHello out.js hello
+```
+
+Open the uploaded script in the Apps Script Editor. If a double-click
+on the script doesn't work ("No preview available") see the first example.
+
+In the editor run the application by testing it as an addon:
+
+![Image of testing as addon](pics/test_as_addon.png)
+
+Note that the script will add an entry in the `Add-ons` menu. If
+the script had been run as a bound script, it would add the menu directly
+into the main menu. We can achieve this effect by using the uploaded
+code as a shared library.
+
+#### Shared Library
+Go back to the script editor from where we launched the add-on test.
+
+Save a new version: File -> Manage versions
+
+Find the script-id. It's available in the URL, or in "File" -> "Project properties".
+
+Now go back to the spreadsheet where we want to run this script in.
+
+From within the spreadsheet open the Script editor ("Tools" -> "Script Editor").
+
+Copy the following code into the editor (usually "Code.gs"):
+
+``` JS
+function onOpen(e) { hello.onOpen(e); }
+function sayHello() { hello.sayHello(); }
+```
+
+Save the project and give it a name.
+
+Go into "Resources" -> "Libraries".
+
+Add a new library, using the script-id we retrieved earlier.
+
+Use the latest version.
+
+Verify that the "Identifier" is correctly set to "hello". (You can also
+use a different identifier, but then you need to update "Code.gs").
+
+Enable "Development mode". This way a new upload of the apps script is
+immediately used. Note, however, that other users only see the selected
+saved version.
+
+Open the spreadsheet again (or reload it). It should now add a new menu
+entry "from dart".
+
 
 ### Remote Script Execution
