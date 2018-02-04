@@ -1,5 +1,7 @@
 # Apps Script Uploader
 
+This is not an official Google product.
+
 This package provides tools for using dart2js-compiled programs as Google Apps
 scripts.
 
