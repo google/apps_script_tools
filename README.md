@@ -117,7 +117,7 @@ is then overwritten from withing the Dart program.
 Concretely, running `main` or `gsify` with `-s onOpen` will add the following
 JavaScript function to the generated `.gs`:
 
-``` JS
+``` JavaScript
 function onOpen() {}
 ```
 
@@ -197,7 +197,7 @@ For example, the following bound script forwards the `onOpen` and `hello`
 functions from the bound script to the shared library (imported with the
 identifier "dart"):
 
-``` JS
+``` JavaScript
 function onOpen(e) { dart.onOpen(e); }
 function demo() { dart.demo(); }
 ```
@@ -209,7 +209,7 @@ library. In this case, the function does not even need a stub.
 For development it's thus convenient to forward the prefix to Dart's
 `onOpen` function:
 
-``` JS
+``` JavaScript
 function onOpen(e) { dart.onOpen(e, "dart"); }
 ```
 
@@ -396,7 +396,7 @@ From within the spreadsheet open the Script editor ("Tools" -> "Script Editor").
 
 Copy the following code into the editor (usually "Code.gs"):
 
-``` JS
+``` JavaScript
 function onOpen(e) { hello.onOpen(e); }
 function sayHello() { hello.sayHello(); }
 ```
