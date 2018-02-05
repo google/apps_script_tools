@@ -29,19 +29,19 @@ const String _SCRIPT_MIME_TYPE = "application/vnd.google-apps.script";
 const String _CONTENT_TYPE = "application/vnd.google-apps.script+json";
 
 const String apiId =
-    "495196518091-s178nd6nf6amcmb7d725gnqt74g17rmv.apps.googleusercontent.com";
-const String apiSecret = "qaabAdnuRVuSfOAbEi3ZXeBO";
+    "182739467893-iq44a0gc3h2easrua3mru8n84pdvpi4h.apps.googleusercontent.com";
+const String apiSecret = "SNmwenVx4fd5aE7aeEixPoxI";
 
 String get _savedCredentialsPath {
   String fileName = "auth.json";
-  if (io.Platform.environment.containsKey('APPS_SCRIPT_UPLOADER_CACHE')) {
-    return io.Platform.environment['APPS_SCRIPT_UPLOADER_CACHE'];
+  if (io.Platform.environment.containsKey('APPS_SCRIPT_TOOLS_CACHE')) {
+    return io.Platform.environment['APPS_SCRIPT_TOOLS_CACHE'];
   } else if (io.Platform.operatingSystem == 'windows') {
     var appData = io.Platform.environment['APPDATA'];
-    return p.join(appData, 'AppsScriptUploader', 'Cache', fileName);
+    return p.join(appData, 'AppsScriptTools', 'Cache', fileName);
   } else {
     return p.join(io.Platform.environment['HOME'],
-        '.apps_script_uploader-cache', fileName);
+        '.apps_script_tools-cache', fileName);
   }
 }
 

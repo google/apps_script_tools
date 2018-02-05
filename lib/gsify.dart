@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'dart:io';
-import 'package:apps_script_uploader/src/preamble.dart';
+import 'src/preamble.dart';
 
 /// Takes a dart2js compiled code [source] and converts it into a valid
 /// Google Apps Script.

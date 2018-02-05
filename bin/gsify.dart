@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:args/args.dart';
-import 'package:apps_script_uploader/gsify.dart';
+import 'package:apps_script_tools/gsify.dart';
 
 void help(ArgParser parser) {
   print("Converts a dart2js compiled output file into a valid"

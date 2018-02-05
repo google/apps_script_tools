@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:args/args.dart';
-import 'package:apps_script_uploader/upload.dart';
+import 'package:apps_script_tools/upload.dart';
 
 
 void help(ArgParser parser) {

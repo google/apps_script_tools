@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:args/args.dart';
-import 'package:apps_script_uploader/run.dart';
+import 'package:apps_script_tools/run.dart';
 
 const scriptId = "M3QyfgU45qAOUdM-H2VBGr4gwnYFpKilg";
 

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:args/args.dart';
-import 'package:apps_script_uploader/main.dart';
+import 'package:apps_script_tools/main.dart';
 
 void help(ArgParser parser) {
   print("Watches the source-javaScript file and uploads it automatically as a");
