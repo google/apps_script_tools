@@ -54,16 +54,8 @@ The script generally does not cache the authentication since the scopes may
 change for different scripts or versions. Users can provide an explicit
 auth-cache path where the authentication is stored.
 
-Each argument to the Apps Script may be prefixed by its type:
-  's:' - String
-  'n:' - Number
-  'a:' - Array
-  'o:' - Object (aka Map)
-  'b:' - boolean
-
-Without explicit type, this script uses a best guess.
-Anything that looks like a number, array, object or boolean is
-  converted. The rest is treated like a string.
+Each argument to the Apps Script is parsed as JSON, and if that fails, passed
+verbatim as a string.
 
 Example:
   run --dev-mode -s https://www.googleapis.com/auth/documents <script-id> helloWorld

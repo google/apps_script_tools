@@ -169,13 +169,27 @@ The Script Editor has a convenient 'Test as add-on...' functionality which
 opens a file with the script running as add-on.
 
 ### Using Google APIs
-Instead of manually opening the Script Editor and clicking "run", one can
-also use Google APIs to trigger the execution of a script's function
-programmatically.
+Google Apps script that have been uploaded to Google Drive can be invoked with
+Google API calls. The "Executing Functions using the Apps Script API Guide"
+https://developers.google.com/apps-script/api/how-tos/execute
+explains how to remotely execute a specified Apps Script function.
 
-This approach requires some setup, because the script and the credentials
-of the API call must be in the same Google Cloud project. The Walk-through
-below details every necessary step.
+Fundamentally, the call needs the following information:
+- the ID of the script project which can be found in the project's
+  properties (ee "Shared Library" above).
+- the name of the function to execute. The corresponding Dart function
+  must be exported with a stub (see above).
+- the arguments.
+
+However, the `scripts.run` API has one important restriction: the script
+being called and the calling application must share a Cloud Platform
+project.
+
+One can either use the default one created for each script, or move the
+script to a different project:
+https://developers.google.com/apps-script/guides/cloud-platform-projects#switch_to_a_different_google_cloud_platform_project
+
+The walk-through below details the necessary steps.
 
 ### As a Shared Library
 The Script Editor's "Test as add-on...", one can also create a bound script
@@ -421,4 +435,48 @@ entry "from dart".
 
 
 ### Remote Script Execution
-TODO.
+Start by finishing the "Create Document" tutorial above. You should now
+have a script "docs_create" in Google Drive.
+
+Open it with the Script Editor.
+
+First retrieve the project id and the necessary scopes for this project:
+- "File" -> "Project properties"
+- Write down the Script ID
+- Switch to the "Scopes" tab
+- Write down the listed scopes (it should just be one:
+ "https://www.googleapis.com/auth/documents").
+
+Publish the script so that the Script's API can find it:
+"Publish" -> "Deploy as API executable".
+
+Now go to "Resources" -> "Cloud Platform project".
+
+In the opened window, the editor shows the project the script is currently
+associated with. Click on the link. This brings you to the
+"Google Cloud Platform" page.
+
+In the "Getting Started" section click on
+"Enable APIs and get credentials like keys".
+
+Enable the Scripting API:
+- Click on "ENABLE APIS AND SERVICES"
+- Search for "Google Apps Script API" and Enable it.
+
+Create new OAuth credentials:
+- Go to the Credentials tab.
+- Click on the "Create Credentials" pop-down and select "OAuth client ID".
+- Chose "Other" and enter a name.
+
+A new window reveals a "client ID" and "client secret".
+
+Use those two strings as follows to run the script remotely from the
+command line:
+```
+$ pub global run apps_script_tools:run -s [SCOPE] --client-id [CLIENT_ID] --client-secret [CLIENT_SECRET] [SCRIPT_ID] create
+```
+If there are multiple scopes, each of them must have its own "-s"
+parameter to the `run` script.
+
+If the script takes parameters, they can be added after the function name
+(here "create").
