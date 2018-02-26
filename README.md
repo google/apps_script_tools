@@ -117,7 +117,7 @@ Spreadsheet Addons that want to add a menu entry must have a statically visible
 `onOpen` function. The output of dart2js avoids modifying the global environment
 and the current JS interop functionality does not give any means to export a
 Dart function. To work around this limitation, one can use a stub function that
-is then overwritten from withing the Dart program.
+is then overwritten from within the Dart program.
 
 Concretely, running `main` or `gsify` with `-s onOpen` will add the following
 JavaScript function to the generated `.gs`:
