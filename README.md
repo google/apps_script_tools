@@ -13,6 +13,9 @@ The `gsify` program adds boilerplate and necessary preambles, and the
 The `main` program makes the development process easier by automatically
 using those two tools whenever the input JS file is changed.
 
+See also [clasp](https://github.com/google/clasp) for a similar tool that isn't
+specialized for Dart, but supports more operations.
+
 ## Usage
 
 The most common use case is to watch the output file of a dart2js
