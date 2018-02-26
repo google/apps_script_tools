@@ -16,6 +16,7 @@ name: apps_script_tools
 description: Tools for using Dart programs as Google Apps scripts.
 version: 0.0.1
 author: Florian Loitsch <florian@loitsch.com>
+homepage: https://github.com/google/apps_script_tools
 
 environment:
   sdk: '>=1.20.1 <2.0.0'
