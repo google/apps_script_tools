@@ -64,10 +64,6 @@ Example:
 pub global activate apps_script_tools
 apps_script_gsify in.js out.gs
 ```
-or, without running `pub global activate`:
-```
-pub global run apps_script_tools:gsify in.js out.gs
-```
 
 The following example adds the `/* @OnlyCurrentDoc */` comment and a
 stub-function called `onOpen`:
@@ -92,10 +88,6 @@ Example:
 ```
 pub global activate apps_script_tools
 apps_script_upload in.gs folder/script_name
-```
-or, without running `pub global activate`:
-```
-pub global run apps_script_tools:upload in.gs folder/script_name
 ```
 
 ### Run
@@ -321,10 +313,6 @@ $ dart2js --csp -o out.js bin/doc.dart
 Upload it Google Drive as a Google Apps script:
 ```
 $ apps_script_watch -s create out.js docs_create
-```
-or if you haven't activated the `apps_script_tools`:
-```
-$ pub global run apps_script_tools:main -s create out.js docs_create
 ```
 
 After authentication, the tool uploads the script as Google Apps script.
