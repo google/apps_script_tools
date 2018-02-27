@@ -472,3 +472,9 @@ If there are multiple scopes, each of them must have its own "-s"
 parameter to the `run` script.
 
 If the script takes parameters, they can be added after the function name.
+
+## Features and bugs
+
+Please file feature requests and bugs at the [issue tracker][tracker].
+
+[tracker]: https://github.com/google/apps_script_tools/issues
