@@ -44,10 +44,6 @@ Example
 pub global activate apps_script_tools
 apps_script_watch in.js folder/script_name
 ```
-or, without running `pub global activate`
-```
-pub global run apps_script_tools:main in.js folder/script_name
-```
 
 ### Gsify
 
