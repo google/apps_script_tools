@@ -199,10 +199,10 @@ outside the editor. It also makes it possible for other users to use the
 script without needing to publish it.
 
 1. Create a saved version of the script you want to use as a shared library. (File -> Manage versions).
-1. Create a bound script ("Tools" -> "Script Editor" from within a open
+2. Create a bound script ("Tools" -> "Script Editor" from within a open
 file (document, spreadsheet, ...).
-2. Save the project and give it a name.
-3. Link the uploaded script as shared library: Resources -> Libraries -> Add a library.
+3. Save the project and give it a name.
+4. Link the uploaded script as shared library: Resources -> Libraries -> Add a library.
   Don't forget to enable the "Development mode". This way uploads to the script are
   immediately visible to you (but not other users).
 
