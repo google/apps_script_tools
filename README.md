@@ -1,6 +1,8 @@
 # Apps Script Tools
 
-This is not an official Google product.
+This is not an official Google product. It is not supported by the Dart team.
+
+This package is still in an experimental state.
 
 This package provides tools for using dart2js-compiled programs as Google Apps
 scripts.
@@ -10,6 +12,9 @@ The `gsify` program adds boilerplate and necessary preambles, and the
 
 The `main` program makes the development process easier by automatically
 using those two tools whenever the input JS file is changed.
+
+See also [clasp](https://github.com/google/clasp) for a similar tool that isn't
+specialized for Dart, but supports more operations.
 
 ## Usage
 
@@ -29,7 +34,7 @@ OAuth authentication).
 Similar to `gsify` it can also add stub functions (see "Stub Functions"
 below) or the
 `/* @OnlyCurrentDoc */` or `/* @NotOnlyCurrentDoc */` comments (see
-[https://developers.google.com/apps-script/guides/services/authorization]).
+https://developers.google.com/apps-script/guides/services/authorization).
 
 *Note that Google Apps script must be compiled with the `--cps` flag of
 dart2js.*
@@ -39,10 +44,6 @@ Example
 pub global activate apps_script_tools
 apps_script_watch in.js folder/script_name
 ```
-or, without running `pub global activate`
-```
-pub global run apps_script_tools:main in.js folder/script_name
-```
 
 ### Gsify
 
@@ -50,7 +51,7 @@ The `gsify` executable converts a dart2js-compiled program into a valid
 Google Apps script.
 It prefixes the necessary preamble and optionally add some stub functions,
 and `/* @OnlyCurrentDoc */` or `/* @NotOnlyCurrentDoc */` comments (see
-[https://developers.google.com/apps-script/guides/services/authorization]).
+https://developers.google.com/apps-script/guides/services/authorization).
 
 The input file must be the output of `dart2js` with the `--cps` flag.
 
@@ -58,10 +59,6 @@ Example:
 ```
 pub global activate apps_script_tools
 apps_script_gsify in.js out.gs
-```
-or, without running `pub global activate`:
-```
-pub global run apps_script_tools:gsify in.js out.gs
 ```
 
 The following example adds the `/* @OnlyCurrentDoc */` comment and a
@@ -88,10 +85,6 @@ Example:
 pub global activate apps_script_tools
 apps_script_upload in.gs folder/script_name
 ```
-or, without running `pub global activate`:
-```
-pub global run apps_script_tools:upload in.gs folder/script_name
-```
 
 ### Run
 
@@ -112,7 +105,7 @@ Spreadsheet Addons that want to add a menu entry must have a statically visible
 `onOpen` function. The output of dart2js avoids modifying the global environment
 and the current JS interop functionality does not give any means to export a
 Dart function. To work around this limitation, one can use a stub function that
-is then overwritten from withing the Dart program.
+is then overwritten from within the Dart program.
 
 Concretely, running `main` or `gsify` with `-s onOpen` will add the following
 JavaScript function to the generated `.gs`:
@@ -144,9 +137,9 @@ main() {
 
 This (or a similar setup) must be done for any function that the Apps framework
 wants to use as an entry point. This includes simple triggers (see
-[https://developers.google.com/apps-script/guides/triggers/), the  menu entries,
+https://developers.google.com/apps-script/guides/triggers/), the  menu entries,
 and callbacks from html services
-([https://developers.google.com/apps-script/guides/html/reference/run]).
+(https://developers.google.com/apps-script/guides/html/reference/run).
 
 ## Running Scripts
 
@@ -168,35 +161,12 @@ Scripts that should be run on an opened document/spreadsheet are called
 The Script Editor has a convenient 'Test as add-on...' functionality which
 opens a file with the script running as add-on.
 
-### Using Google APIs
-Google Apps script that have been uploaded to Google Drive can be invoked with
-Google API calls. The "Executing Functions using the Apps Script API Guide"
-https://developers.google.com/apps-script/api/how-tos/execute
-explains how to remotely execute a specified Apps Script function.
-
-Fundamentally, the call needs the following information:
-- the ID of the script project which can be found in the project's
-  properties (ee "Shared Library" above).
-- the name of the function to execute. The corresponding Dart function
-  must be exported with a stub (see above).
-- the arguments.
-
-However, the `scripts.run` API has one important restriction: the script
-being called and the calling application must share a Cloud Platform
-project.
-
-One can either use the default one created for each script, or move the
-script to a different project:
-https://developers.google.com/apps-script/guides/cloud-platform-projects#switch_to_a_different_google_cloud_platform_project
-
-The walk-through below details the necessary steps.
-
 ### As a Shared Library
-The Script Editor's "Test as add-on...", one can also create a bound script
-and use the uploaded script as a shared library. This approach has the
-advantage that the script will also be loaded when the document is opened
-outside the editor. It also makes it possible for other users to use the
-script without needing to publish it.
+Instead of using Script Editor's "Test as add-on...", one can also create a
+bound script directly and then use the uploaded script as a shared library. This
+approach has the advantage that the script will also be loaded when the document
+is opened outside the editor. It also makes it possible for other users to use
+the script without needing to publish it.
 
 1. Create a saved version of the script you want to use as a shared library. (File -> Manage versions).
 2. Create a bound script ("Tools" -> "Script Editor" from within a open
@@ -206,7 +176,7 @@ file (document, spreadsheet, ...).
   Don't forget to enable the "Development mode". This way uploads to the script are
   immediately visible to you (but not other users).
 
-Once that's in place, on just needs to forward functions to the shared library.
+Once that's in place, one just needs to forward functions to the shared library.
 For example, the following bound script forwards the `onOpen` and `hello`
 functions from the bound script to the shared library (imported with the
 identifier "dart"):
@@ -259,6 +229,29 @@ main() {
   hello = allowInterop(helloDart);
 }
 ```
+
+### Using Google APIs
+Google Apps script that have been uploaded to Google Drive can be invoked with
+Google API calls. The [Executing Functions using the Apps Script API Guide](https://developers.google.com/apps-script/api/how-tos/execute)
+explains how to remotely execute a specified Apps Script function.
+
+Fundamentally, the call needs the following information:
+- the ID of the script project which can be found in the project's
+  properties (see "Shared Library" above).
+- the name of the function to execute. The corresponding Dart function
+  must be exported with a stub (see above).
+- the arguments.
+
+However, the `scripts.run` API has one important restriction: the script
+being called and the calling application must share a Cloud Platform
+project.
+
+One can either use the default one created for each script, or move the
+script to a different project:
+https://developers.google.com/apps-script/guides/cloud-platform-projects#switch_to_a_different_google_cloud_platform_project
+
+The walk-through below details the necessary steps.
+
 
 ## Walk-throughs
 This section step-by-step instructions on common tasks.
@@ -316,10 +309,6 @@ $ dart2js --csp -o out.js bin/doc.dart
 Upload it Google Drive as a Google Apps script:
 ```
 $ apps_script_watch -s create out.js docs_create
-```
-(or if you haven't activated the `apps_script_tools`:
-```
-$ pub global run apps_script_tools:main -s create out.js docs_create
 ```
 
 After authentication, the tool uploads the script as Google Apps script.
@@ -478,5 +467,10 @@ $ pub global run apps_script_tools:run -s [SCOPE] --client-id [CLIENT_ID] --clie
 If there are multiple scopes, each of them must have its own "-s"
 parameter to the `run` script.
 
-If the script takes parameters, they can be added after the function name
-(here "create").
+If the script takes parameters, they can be added after the function name.
+
+## Features and bugs
+
+Please file feature requests and bugs at the [issue tracker][tracker].
+
+[tracker]: https://github.com/google/apps_script_tools/issues
