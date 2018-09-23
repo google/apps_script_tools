@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'dart:async';
-import 'dart:convert' show JSON;
+import 'dart:convert' show json;
 
 import 'package:googleapis/script/v1.dart';
 
@@ -24,7 +24,7 @@ const String _CONTENT_TYPE = "application/vnd.google-apps.script+json";
 
 dynamic _convertArg(String arg) {
   try {
-    return JSON.decode(arg);
+    return json.decode(arg);
   } catch(e) {
     return arg;
   }

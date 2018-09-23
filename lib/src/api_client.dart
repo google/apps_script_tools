@@ -63,7 +63,7 @@ class ApiClient {
 
     var file = new io.File(savedCredentialsPath);
     if (!file.existsSync()) return null;
-    var decoded = JSON.decode(file.readAsStringSync());
+    var decoded = json.decode(file.readAsStringSync());
     var refreshToken = decoded['refreshToken'];
     if (refreshToken == null) {
       print("refreshToken missing. Users will have to authenticate again.");
@@ -74,7 +74,7 @@ class ApiClient {
         jsonAccessToken['data'],
         new DateTime.fromMillisecondsSinceEpoch(jsonAccessToken['expiry'],
             isUtc: true));
-    var scopes = decoded['scopes'].map<String>((x) => x).toList();
+    var scopes = (decoded['scopes'] as List).cast<String>();
     return new AccessCredentials(accessToken, refreshToken, scopes);
   }
 
@@ -84,7 +84,7 @@ class ApiClient {
 
     try {
       var accessToken = credentials.accessToken;
-      var encoded = JSON.encode({
+      var encoded = json.encode({
         'refreshToken': credentials.refreshToken,
         'accessToken': {
           "type": accessToken.type,

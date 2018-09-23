@@ -84,7 +84,7 @@ class Uploader {
     if (existing != null) {
       payload["id"] = existing["files"][0]["id"];
     }
-    return JSON.encode({
+    return json.encode({
       "files": [payload]
     });
   }
@@ -130,8 +130,8 @@ class Uploader {
           sameNamedFiles[0].id, _CONTENT_TYPE,
           downloadOptions: DownloadOptions.FullMedia);
       existing = await media.stream
-          .transform(UTF8.decoder)
-          .transform(JSON.decoder)
+          .transform(utf8.decoder)
+          .transform(json.decoder)
           .first;
     } else {
       print("Multiple files of same name. Don't know which one to update.");
@@ -143,7 +143,7 @@ class Uploader {
       ..mimeType = _SCRIPT_MIME_TYPE;
 
     var payload = _createPayload(source, _projectName, existing);
-    var utf8Encoded = UTF8.encode(payload);
+    var utf8Encoded = utf8.encode(payload);
     var media = new Media(
         new Stream<List<int>>.fromIterable([utf8Encoded]), utf8Encoded.length,
         contentType: _CONTENT_TYPE);
