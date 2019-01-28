@@ -24,8 +24,7 @@ void help(ArgParser parser) {
 
 main(List<String> args) async {
   var parser = new ArgParser();
-  parser.addOption("stub",
-      abbr: 's', help: "provides a function stub", allowMultiple: true);
+  parser.addMultiOption("stub", abbr: 's', help: "provides a function stub");
   parser.addFlag("only-current-document",
       help: "only accesses the current document "
           "(https://developers.google.com/apps-script/"

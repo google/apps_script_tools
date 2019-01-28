@@ -19,9 +19,6 @@ import 'package:googleapis/script/v1.dart';
 
 import 'src/api_client.dart';
 
-const String _SCRIPT_MIME_TYPE = "application/vnd.google-apps.script";
-const String _CONTENT_TYPE = "application/vnd.google-apps.script+json";
-
 dynamic _convertArg(String arg) {
   try {
     return json.decode(arg);

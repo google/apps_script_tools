@@ -19,9 +19,6 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:path/path.dart' as p;
 import 'package:http/http.dart' show Client;
 
-const String _SCRIPT_MIME_TYPE = "application/vnd.google-apps.script";
-const String _CONTENT_TYPE = "application/vnd.google-apps.script+json";
-
 /// An Google API Client.
 ///
 /// Asks the user to authenticate and caches the tokens.

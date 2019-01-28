@@ -68,7 +68,7 @@ main(List<String> args) async {
   parser.addFlag("dev-mode",
       help: "Runs the most recently saved version rather than the deployed "
           "version.");
-  parser.addOption("scope", abbr: "s", allowMultiple: true);
+  parser.addMultiOption("scope", abbr: "s");
   parser.addOption("auth-cache",
       help: "The file-path where the authentication should be cached");
   parser.addFlag("help", abbr: "h", help: "this help", negatable: false);
