@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.1
+- Fix dartfmt.
+
 ## 1.0.0
 - Change version.
 - Cleanups to make pana happy.
