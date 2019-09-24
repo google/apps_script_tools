@@ -23,7 +23,7 @@ void help(ArgParser parser) {
 }
 
 main(List<String> args) async {
-  var parser = new ArgParser();
+  var parser = ArgParser();
   parser.addFlag("help", abbr: "h", help: "this help", negatable: false);
   var parsedArgs = parser.parse(args);
   if (parsedArgs['help'] ||
@@ -34,5 +34,5 @@ main(List<String> args) async {
 
   var sourcePath = parsedArgs.rest.first;
   var destination = parsedArgs.rest.last;
-  upload(sourcePath, destination);
+  await upload(sourcePath, destination);
 }

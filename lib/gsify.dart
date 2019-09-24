@@ -32,7 +32,7 @@ String gsify(String source,
     {List<String> interfaceFunctions = const [],
     bool onlyCurrentDocument = false,
     bool notOnlyCurrentDocument = false}) {
-  var result = new StringBuffer();
+  var result = StringBuffer();
   if (onlyCurrentDocument) {
     result.writeln("/* @OnlyCurrentDoc */");
   }
@@ -47,7 +47,6 @@ String gsify(String source,
   result.write(source);
   return result.toString();
 }
-
 
 /// Takes a dart2js compiled output file [sourcePath] and converts it into a
 /// valid Google Apps Script writing it into [outPath].
@@ -66,10 +65,10 @@ void gsifyFile(String sourcePath, String outPath,
     {List<String> interfaceFunctions = const [],
     bool onlyCurrentDocument = false,
     bool notOnlyCurrentDocument = false}) {
-  var source = new File(sourcePath).readAsStringSync();
+  var source = File(sourcePath).readAsStringSync();
   var gsified = gsify(source,
       interfaceFunctions: interfaceFunctions,
       onlyCurrentDocument: onlyCurrentDocument,
       notOnlyCurrentDocument: notOnlyCurrentDocument);
-  new File(outPath).writeAsStringSync(gsified);
+  File(outPath).writeAsStringSync(gsified);
 }
