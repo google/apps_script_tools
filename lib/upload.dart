@@ -124,8 +124,7 @@ class Uploader {
         "trashed = false";
     var sameNamedFiles = (await _drive.files.list(q: query)).files;
     var scripts = sameNamedFiles
-        .where(
-            (file) => file.mimeType == "application/vnd.google-apps.script")
+        .where((file) => file.mimeType == "application/vnd.google-apps.script")
         .toList();
     var existing;
     if (scripts.isEmpty) {

@@ -15,7 +15,6 @@
 import 'package:args/args.dart';
 import 'package:apps_script_tools/upload.dart';
 
-
 void help(ArgParser parser) {
   print("Uploads a given '.gs' script to Google Drive as a Google Apps script");
   print("Usage: upload compiled.gs destination");
@@ -26,8 +25,7 @@ main(List<String> args) async {
   var parser = ArgParser();
   parser.addFlag("help", abbr: "h", help: "this help", negatable: false);
   var parsedArgs = parser.parse(args);
-  if (parsedArgs['help'] ||
-      parsedArgs.rest.length != 2) {
+  if (parsedArgs['help'] || parsedArgs.rest.length != 2) {
     help(parser);
     return parsedArgs['help'] ? 0 : 1;
   }
