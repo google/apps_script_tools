@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.2
+- Fix tool when there are files with the same name.
+
 ## 1.0.1
 - Fix dartfmt.
 

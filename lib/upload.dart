@@ -131,13 +131,18 @@ class Uploader {
       print("Need to create new project.");
     } else if (scripts.length == 1) {
       print("Need to update existing project.");
-      Media media = await _drive.files.export(
-          sameNamedFiles[0].id, _CONTENT_TYPE,
-          downloadOptions: DownloadOptions.FullMedia);
-      existing = await media.stream
-          .transform(utf8.decoder)
-          .transform(json.decoder)
-          .first;
+      try {
+        Media media = await _drive.files.export(
+            scripts[0].id, _CONTENT_TYPE,
+            downloadOptions: DownloadOptions.FullMedia);
+        existing = await media.stream
+            .transform(utf8.decoder)
+            .transform(json.decoder)
+            .first;
+      } catch (e) {
+        print(e);
+        rethrow;
+      }
     } else {
       print("Multiple scripts of same name. Don't know which one to update.");
       return;
