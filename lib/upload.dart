@@ -165,7 +165,7 @@ class Uploader {
     } else if (scripts.length == 1) {
       // Update the existing file.
       print("Updating existing file ${_projectName}");
-      await _drive.files.update(file, sameNamedFiles[0].id, uploadMedia: media);
+      await _drive.files.update(file, scripts[0].id, uploadMedia: media);
     }
     print("Uploading ${_projectName} done");
   }
