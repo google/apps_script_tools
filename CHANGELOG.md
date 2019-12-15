@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.4
+- Update args dependency, and reformat one file.
+
 ## 1.0.3
 - Really fix tool when there are files with the same name.
 

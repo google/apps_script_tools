@@ -132,8 +132,7 @@ class Uploader {
     } else if (scripts.length == 1) {
       print("Need to update existing project.");
       try {
-        Media media = await _drive.files.export(
-            scripts[0].id, _CONTENT_TYPE,
+        Media media = await _drive.files.export(scripts[0].id, _CONTENT_TYPE,
             downloadOptions: DownloadOptions.FullMedia);
         existing = await media.stream
             .transform(utf8.decoder)
