@@ -23,18 +23,18 @@ import 'upload.dart';
 ///
 /// When [emitAtListen] is true, also emits an event when this function is
 /// started and the file already exists.
-Stream watchPath(String path, {bool emitAtListen: false}) async* {
-  var file = new io.File(path);
+Stream watchPath(String path, {bool emitAtListen = false}) async* {
+  var file = io.File(path);
   if (file.existsSync() && emitAtListen) yield null;
 
   outerLoop:
   while (true) {
     if (!file.existsSync()) {
       var directory = p.dirname(path);
-      while (!new io.Directory(directory).existsSync()) {
+      while (!io.Directory(directory).existsSync()) {
         directory = p.dirname(directory);
       }
-      await for (var directoryEvent in new DirectoryWatcher(directory).events) {
+      await for (var _ in DirectoryWatcher(directory).events) {
         if (file.existsSync()) {
           yield null;
           break;
@@ -45,7 +45,7 @@ Stream watchPath(String path, {bool emitAtListen: false}) async* {
       }
     }
     if (file.existsSync()) {
-      await for (var event in new FileWatcher(path).events) {
+      await for (var event in FileWatcher(path).events) {
         if (event.type != ChangeType.REMOVE) yield null;
       }
     }
@@ -58,16 +58,15 @@ Stream watchPath(String path, {bool emitAtListen: false}) async* {
 /// When gsifying the input source uses [interfaceFunctions],
 /// [onlyCurrentDocument] and [notOnlyCurrentDocument] to, optionally, add
 /// some boilerplate. See [gsify] for more information.
-Future startWatching(
-    String sourcePath, String destination,
+Future startWatching(String sourcePath, String destination,
     {List<String> interfaceFunctions,
     bool onlyCurrentDocument,
     bool notOnlyCurrentDocument}) async {
-  var uploader = new Uploader(destination);
+  var uploader = Uploader(destination);
   await uploader.authenticate();
 
-  await for (var event in watchPath(sourcePath, emitAtListen: true)) {
-    var source = new io.File(sourcePath).readAsStringSync();
+  await for (var _ in watchPath(sourcePath, emitAtListen: true)) {
+    var source = io.File(sourcePath).readAsStringSync();
     var gsified = gsify(source,
         interfaceFunctions: interfaceFunctions,
         onlyCurrentDocument: onlyCurrentDocument,

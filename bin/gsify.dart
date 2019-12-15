@@ -23,7 +23,7 @@ void help(ArgParser parser) {
 }
 
 main(args) {
-  var parser = new ArgParser();
+  var parser = ArgParser();
   parser.addMultiOption("stub", abbr: 's', help: "provides a function stub");
   parser.addFlag("only-current-document",
       help: "only accesses the current document "

@@ -2,8 +2,6 @@
 
 This is not an official Google product. It is not supported by the Dart team.
 
-This package is still in an experimental state.
-
 This package provides tools for using dart2js-compiled programs as Google Apps
 scripts.
 

@@ -64,7 +64,7 @@ Example:
 }
 
 main(List<String> args) async {
-  var parser = new ArgParser();
+  var parser = ArgParser();
   parser.addFlag("dev-mode",
       help: "Runs the most recently saved version rather than the deployed "
           "version.");
@@ -99,7 +99,7 @@ main(List<String> args) async {
 
   String authCachePath = parsedArgs['auth-cache'];
 
-  runScript(scriptId, scriptFun, clientId, clientSecret, scopes,
+  await runScript(scriptId, scriptFun, clientId, clientSecret, scopes,
       parsedArgs.rest.skip(2).toList(),
       devMode: devMode, authCachePath: authCachePath);
 }

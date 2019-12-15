@@ -31,8 +31,8 @@ class ApiClient {
   /// Uses Google APIs to authenticate with [id] and [secret]. If id
   Future authenticate(String id, String secret, List<String> scopes,
       String authCachePath) async {
-    _baseClient = new Client();
-    var clientId = new ClientId(id, secret);
+    _baseClient = Client();
+    var clientId = ClientId(id, secret);
     // TODO(floitsch): this probably doesn't work when the scopes change.
     var credentials = _readSavedCredentials(authCachePath);
     if (credentials == null ||
@@ -58,7 +58,7 @@ class ApiClient {
   AccessCredentials _readSavedCredentials(String savedCredentialsPath) {
     if (savedCredentialsPath == null) return null;
 
-    var file = new io.File(savedCredentialsPath);
+    var file = io.File(savedCredentialsPath);
     if (!file.existsSync()) return null;
     var decoded = json.decode(file.readAsStringSync());
     var refreshToken = decoded['refreshToken'];
@@ -66,13 +66,13 @@ class ApiClient {
       print("refreshToken missing. Users will have to authenticate again.");
     }
     var jsonAccessToken = decoded['accessToken'];
-    var accessToken = new AccessToken(
+    var accessToken = AccessToken(
         jsonAccessToken['type'],
         jsonAccessToken['data'],
-        new DateTime.fromMillisecondsSinceEpoch(jsonAccessToken['expiry'],
+        DateTime.fromMillisecondsSinceEpoch(jsonAccessToken['expiry'],
             isUtc: true));
     var scopes = (decoded['scopes'] as List).cast<String>();
-    return new AccessCredentials(accessToken, refreshToken, scopes);
+    return AccessCredentials(accessToken, refreshToken, scopes);
   }
 
   void _saveCredentials(
@@ -90,9 +90,9 @@ class ApiClient {
         },
         'scopes': credentials.scopes
       });
-      var directory = new io.Directory(p.dirname(savedCredentialsPath));
+      var directory = io.Directory(p.dirname(savedCredentialsPath));
       if (!directory.existsSync()) directory.createSync(recursive: true);
-      new io.File(savedCredentialsPath).writeAsStringSync(encoded);
+      io.File(savedCredentialsPath).writeAsStringSync(encoded);
     } catch (e) {
       print("Couldn't save credentials: $e");
     }

@@ -22,7 +22,7 @@ import 'src/api_client.dart';
 dynamic _convertArg(String arg) {
   try {
     return json.decode(arg);
-  } catch(e) {
+  } catch (e) {
     return arg;
   }
 }
@@ -30,15 +30,15 @@ dynamic _convertArg(String arg) {
 Future runScript(String scriptId, String funName, String clientId,
     String clientSecret, List<String> scopes, List<String> unconvertedArgs,
     {bool devMode = false, String authCachePath}) async {
-  var apiClient = new ApiClient();
+  var apiClient = ApiClient();
 
   await apiClient.authenticate(clientId, clientSecret, scopes, authCachePath);
 
   List convertedArgs = unconvertedArgs.map(_convertArg).toList();
 
-  var api = new ScriptApi(apiClient.client);
+  var api = ScriptApi(apiClient.client);
 
-  var request = new ExecutionRequest()
+  var request = ExecutionRequest()
     ..devMode = devMode
     ..function = funName
     ..parameters = convertedArgs;

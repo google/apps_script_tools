@@ -20,10 +20,7 @@ import 'package:path/path.dart' as p;
 
 import 'src/api_client.dart';
 
-const List<String> _SCOPES = const [
-  DriveApi.DriveScope,
-  DriveApi.DriveScriptsScope
-];
+const List<String> _SCOPES = [DriveApi.DriveScope, DriveApi.DriveScriptsScope];
 
 const String _SCRIPT_MIME_TYPE = "application/vnd.google-apps.script";
 const String _CONTENT_TYPE = "application/vnd.google-apps.script+json";
@@ -40,8 +37,8 @@ String get _savedCredentialsPath {
     var appData = io.Platform.environment['APPDATA'];
     return p.join(appData, 'AppsScriptTools', 'Cache', fileName);
   } else {
-    return p.join(io.Platform.environment['HOME'],
-        '.apps_script_tools-cache', fileName);
+    return p.join(
+        io.Platform.environment['HOME'], '.apps_script_tools-cache', fileName);
   }
 }
 
@@ -49,7 +46,7 @@ String get _savedCredentialsPath {
 ///
 /// Once authenticated, the uploader can upload new versions of the script.
 class Uploader {
-  final ApiClient _apiClient = new ApiClient();
+  final ApiClient _apiClient = ApiClient();
   final String _destination;
   DriveApi _drive;
 
@@ -65,7 +62,7 @@ class Uploader {
   Future authenticate() async {
     await _apiClient.authenticate(
         apiId, apiSecret, _SCOPES, _savedCredentialsPath);
-    _drive = new DriveApi(_apiClient.client);
+    _drive = DriveApi(_apiClient.client);
   }
 
   /// Shuts down this uploader.
@@ -95,11 +92,16 @@ class Uploader {
       var q =
           "name = '$segment' and '$parentId' in parents and trashed = false";
       var nestedFiles = (await drive.files.list(q: q)).files;
-      if (nestedFiles.length == 1 &&
-          nestedFiles[0].mimeType == "application/vnd.google-apps.folder") {
-        parentId = nestedFiles[0].id;
-      } else {
+      var folders = nestedFiles
+          .where(
+              (file) => file.mimeType == "application/vnd.google-apps.folder")
+          .toList();
+      if (folders.length == 1) {
+        parentId = folders.first.id;
+      } else if (folders.isEmpty) {
         throw "Couldn't find folder $segment";
+      } else {
+        throw "Couldn't find single folder $segment";
       }
     }
     return parentId;
@@ -121,41 +123,49 @@ class Uploader {
         "'$_destinationFolderId' in parents and "
         "trashed = false";
     var sameNamedFiles = (await _drive.files.list(q: query)).files;
-    var existing = null;
-    if (sameNamedFiles.isEmpty) {
+    var scripts = sameNamedFiles
+        .where((file) => file.mimeType == "application/vnd.google-apps.script")
+        .toList();
+    var existing;
+    if (scripts.isEmpty) {
       print("Need to create new project.");
-    } else if (sameNamedFiles.length == 1) {
+    } else if (scripts.length == 1) {
       print("Need to update existing project.");
-      Media media = await _drive.files.export(
-          sameNamedFiles[0].id, _CONTENT_TYPE,
-          downloadOptions: DownloadOptions.FullMedia);
-      existing = await media.stream
-          .transform(utf8.decoder)
-          .transform(json.decoder)
-          .first;
+      try {
+        Media media = await _drive.files.export(
+            scripts[0].id, _CONTENT_TYPE,
+            downloadOptions: DownloadOptions.FullMedia);
+        existing = await media.stream
+            .transform(utf8.decoder)
+            .transform(json.decoder)
+            .first;
+      } catch (e) {
+        print(e);
+        rethrow;
+      }
     } else {
-      print("Multiple files of same name. Don't know which one to update.");
+      print("Multiple scripts of same name. Don't know which one to update.");
       return;
     }
 
-    var file = new File()
+    var file = File()
       ..name = _projectName
       ..mimeType = _SCRIPT_MIME_TYPE;
 
     var payload = _createPayload(source, _projectName, existing);
     var utf8Encoded = utf8.encode(payload);
-    var media = new Media(
-        new Stream<List<int>>.fromIterable([utf8Encoded]), utf8Encoded.length,
+    var media = Media(
+        Stream<List<int>>.fromIterable([utf8Encoded]), utf8Encoded.length,
         contentType: _CONTENT_TYPE);
 
-    if (sameNamedFiles.isEmpty) {
+    if (scripts.isEmpty) {
       print("Creating new file ${_projectName}");
       file.parents = [_destinationFolderId];
       await _drive.files.create(file, uploadMedia: media);
-    } else if (sameNamedFiles.length == 1) {
+    } else if (scripts.length == 1) {
       // Update the existing file.
       print("Updating existing file ${_projectName}");
-      await _drive.files.update(file, sameNamedFiles[0].id, uploadMedia: media);
+      await _drive.files.update(file, scripts[0].id, uploadMedia: media);
     }
     print("Uploading ${_projectName} done");
   }
@@ -164,9 +174,9 @@ class Uploader {
 /// Uploads the given [sourcePath] to the [destination] in Google Drive.
 ///
 Future upload(String sourcePath, String destination) async {
-  var uploader = new Uploader(destination);
+  var uploader = Uploader(destination);
   await uploader.authenticate();
-  var source = new io.File(sourcePath).readAsStringSync();
+  var source = io.File(sourcePath).readAsStringSync();
   await uploader.uploadScript(source);
   await uploader.close();
 }
